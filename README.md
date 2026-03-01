@@ -151,3 +151,21 @@ Final response:
 - Vector retrieval latency: ~50-100ms (pgvector ivfflat index)
 - Hybrid search precision@1: >0.9 with keyword grounding
 - End-to-end orchestration: <2s (async Celery execution)
+
+---
+
+## ⚠️ Current Limitations & Trade-offs (Demo State)
+
+Due to API credit constraints and the need for deterministic testing, this iteration includes the following architectural trade-offs:
+
+* **Mocked LLM Brain:** The `IntentClassifier` and `Synthesizer` currently use a deterministic rule-based router rather than a live OpenAI/Anthropic call. This ensures the demo and test suite run reliably without network/cost overhead. The system is structurally designed to swap these out for real LLM API calls that output structured JSON.
+* **Local Embeddings:** We replaced external embedding APIs with local CPU inference using `sentence-transformers` (`all-MiniLM-L6-v2`). This provides genuine semantic vector math (384 dimensions) for the pgvector hybrid search while remaining completely free and offline.
+
+---
+
+## 🧪 Testing
+
+The project includes a comprehensive end-to-end integration test suite hitting the live Dockerized orchestration API. It covers single-service, multi-service, and complex edge cases.
+
+```bash
+uv run pytest tests/ -v -s

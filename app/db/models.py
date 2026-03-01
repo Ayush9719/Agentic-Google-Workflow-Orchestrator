@@ -40,7 +40,7 @@ class GmailCache(Base):
     email_id = Column(String(255), nullable=False)
     subject = Column(Text, nullable=True)
     body_preview = Column(Text, nullable=True)
-    embedding = Column(Vector(1536), nullable=True)
+    embedding = Column(Vector(384), nullable=True)
     received_at = Column(TIMESTAMP(timezone=True), nullable=True)
 
 
@@ -55,7 +55,7 @@ class GCalCache(Base):
     event_id = Column(String(255), nullable=False)
     title = Column(Text, nullable=True)
     description = Column(Text, nullable=True)
-    embedding = Column(Vector(1536), nullable=True)
+    embedding = Column(Vector(384), nullable=True)
     start_time = Column(TIMESTAMP(timezone=True), nullable=True)
 
 
@@ -70,5 +70,5 @@ class GDriveCache(Base):
     file_id = Column(String(255), nullable=False)
     name = Column(Text, nullable=True)
     content_preview = Column(Text, nullable=True)
-    embedding = Column(Vector(1536), nullable=True)
+    embedding = Column(Vector(384), nullable=True)
     updated_at = Column(TIMESTAMP(timezone=True), nullable=True)

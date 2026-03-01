@@ -12,7 +12,8 @@ Submit a natural language orchestration request.
 
 ```json
 {
-  "query": "Cancel my Turkish Airlines flight"
+  "query": "Cancel my Turkish Airlines flight",
+  "conversation_id": "550e8400-e29b-41d4-a716-446655440000"
 }
 ```
 
@@ -76,6 +77,55 @@ Retrieve execution status and results.
 {
   "status": "failed",
   "error": "Intent classification failed"
+}
+```
+
+---
+
+## GET /auth/google
+
+Trigger the Google Workspace OAuth flow. (Mocked for Demo)
+
+### Response
+
+```json
+{
+  "status": "mocked",
+  "auth_url": "[https://accounts.google.com/o/oauth2/v2/auth?mock=true](https://accounts.google.com/o/oauth2/v2/auth?mock=true)"
+}
+```
+
+---
+
+## POST /sync/trigger
+
+Manually sync Gmail, GCal, and Drive metadata/embeddings. (Mocked for Demo)
+
+### Response
+
+```json
+{
+  "status": "sync_triggered",
+  "message": "Background sync for Gmail, GCal, and Drive initiated."
+}
+```
+
+---
+
+## GET /sync/status
+
+Retrieve the last sync timestamps per service. (Mocked for Demo)
+
+### Response
+
+```json
+{
+  "status": "success",
+  "last_sync": {
+    "gmail": "2026-03-01T20:00:00.000Z",
+    "gcal": "2026-03-01T20:00:00.000Z",
+    "gdrive": "2026-03-01T20:00:00.000Z"
+  }
 }
 ```
 

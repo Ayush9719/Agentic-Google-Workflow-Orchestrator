@@ -8,16 +8,28 @@ import asyncio
 
 @celery_app.task
 def run_orchestration(user_id: str, query: str):
-    classifier = IntentClassifier()
-    intent = asyncio.run(classifier.classify(query))
+    """Wrapper task to run the async orchestration pipeline in a single loop."""
+    
+    # Define the entire flow as a single async function
+    async def _run_pipeline():
+        # 1. Classify
+        classifier = IntentClassifier()
+        intent = await classifier.classify(query)
 
-    planner = QueryPlanner()
-    plan = planner.build_plan(intent)
+        # 2. Plan
+        planner = QueryPlanner()
+        plan = planner.build_plan(intent)
 
-    engine = OrchestratorEngine()
-    results = asyncio.run(engine.execute(plan, {"user_id": user_id}))
+        # 3. Execute
+        engine = OrchestratorEngine()
+        results = await engine.execute(plan, {"user_id": user_id})
+        
+        return intent, results
 
-    # Synthesize natural language response
+    # Execute the entire pipeline inside ONE event loop
+    intent, results = asyncio.run(_run_pipeline())
+
+    # 4. Synthesize (Synchronous)
     synthesizer = Synthesizer()
     message = synthesizer.synthesize(intent, results)
 

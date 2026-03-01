@@ -151,9 +151,18 @@ Celery workers execute orchestration tasks asynchronously.
 
 | Decision | Rationale | Tradeoff |
 |---|---|---|
-| **Hybrid retrieval** | Precision > pure vector | 10% slower than keyword-only |
-| **Agent-based design** | Modularity and isolation | Slight complexity in dispatch |
-| **Deterministic synthesis** | Reproducibility and testability | Less fluent than LLM responses |
-| **pgvector ivfflat** | Fast approximate similarity | Index rebuild required for resharding |
-| **Celery async** | Scalability and resilience | Added infrastructure (Redis, workers) |
-| **Mock embeddings in demo** | Deterministic testing | Not production-quality |
+| **Local Embeddings (all-MiniLM-L6-v2)** | Avoids API latency/costs while proving pgvector math is accurate. | 384 dimensions vs OpenAI's 1536; slightly lower semantic nuance but vastly faster CPU inference. |
+| **Rule-Based Intent Mocking** | Provides a deterministic, free environment to build and test the complex DAG engine. | Lacks the dynamic parsing of a true LLM. Future state replaces `classifier.py` with an OpenAI structured output call. |
+| **Hybrid retrieval** | Precision > pure vector to avoid hallucinated matches. | 10% slower than keyword-only search. |
+| **Agent-based design** | Modularity and isolation. | Slight complexity in dispatch and context propagation. |
+| **pgvector ivfflat** | Fast approximate similarity for sub-500ms latency. | Index rebuild required for major resharding. |
+| **Celery async + NullPool** | Scalability and resilience while preventing async event-loop pollution. | Added infrastructure (Redis, workers). |
+
+---
+
+## 11. Productionizing the LLM (Future Work)
+
+To transition this orchestrator to production, the mocked `IntentClassifier` will be replaced with an LLM call (e.g., `gpt-4o-mini` or `claude-3-haiku`) using structured outputs. 
+
+**Proposed Prompt Architecture:**
+The LLM will be provided the user's query, the conversation context history, and the exact schema of available agent tools. It will be instructed to output a JSON object containing a `steps` array, where each step explicitly declares its `dependencies`. This allows the `QueryPlanner` to dynamically build parallelized execution DAGs on the fly, unlocking true autonomous orchestration.

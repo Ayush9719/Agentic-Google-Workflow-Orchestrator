@@ -59,35 +59,49 @@ Return ONLY valid JSON. No markdown, no explanation."""
             return {
                 "services": ["gmail", "gcal"],
                 "intent": "cancel_flight",
-                "entities": {
-                    "airline": "Turkish Airlines"
-                },
-                "steps": [
-                    "search_gmail_for_booking",
-                    "find_calendar_event",
-                    "draft_cancellation_email"
-                ],
+                "entities": {"airline": "Turkish Airlines"},
+                "steps": ["search_gmail_for_booking", "find_calendar_event", "draft_cancellation_email"],
             }
-
-        if "meeting" in query_lower:
+            
+        if "acme corp" in query_lower:
             return {
-                "services": ["gcal", "gmail"],
-                "intent": "manage_meeting",
-                "entities": {},
-                "steps": [
-                    "search_calendar_event",
-                    "search_related_emails"
-                ],
+                "services": ["gcal", "gmail", "gdrive"],
+                "intent": "prepare_meeting",
+                "entities": {"company": "Acme Corp"},
+                "steps": ["find_calendar_event", "search_gmail", "search_drive_files"],
+            }
+            
+        if "out-of-office" in query_lower:
+            return {
+                "services": ["gcal", "gdrive"],
+                "intent": "check_conflicts",
+                "entities": {"document": "out-of-office"},
+                "steps": ["search_drive_files", "find_calendar_event"],
             }
 
-        if "email" in query_lower:
+        # Single Service & Hard Cases
+        if "calendar" in query_lower or "meeting" in query_lower or "tuesday" in query_lower:
+            return {
+                "services": ["gcal"],
+                "intent": "check_calendar",
+                "entities": {},
+                "steps": ["find_calendar_event"],
+            }
+            
+        if "emails" in query_lower or "email" in query_lower:
             return {
                 "services": ["gmail"],
-                "intent": "manage_email",
+                "intent": "search_emails",
                 "entities": {},
-                "steps": [
-                    "search_gmail"
-                ],
+                "steps": ["search_gmail"],
+            }
+            
+        if "drive" in query_lower or "pdfs" in query_lower:
+            return {
+                "services": ["gdrive"],
+                "intent": "search_drive",
+                "entities": {},
+                "steps": ["search_drive_files"],
             }
 
         return {

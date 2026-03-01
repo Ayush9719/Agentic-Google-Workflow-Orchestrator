@@ -136,11 +136,9 @@ async def seed_demo_data() -> None:
         for i, file in enumerate(gdrive_files):
             gdfile = GDriveCache(
                 user_id=DEMO_USER_ID,
-                external_id=str(uuid.uuid4()),
-                payload={
-                    "name": file["name"],
-                    "content_preview": file["content_preview"],
-                },
+                file_id=str(uuid.uuid4()),
+                name=file["name"],
+                content_preview=file["content_preview"],
                 embedding=await embeddings_svc.embed(file["name"] + " " + file["content_preview"]),
             )
             db.add(gdfile)

@@ -44,11 +44,11 @@ class DriveAgent(BaseAgent):
         query_embedding = await self.embeddings_svc.embed(query_text)
 
         query_sql = """
-            SELECT id, external_id, payload
+            SELECT id, file_id, name, content_preview
             FROM gdrive_cache
             WHERE user_id = :user_id
-            AND (payload->>'name') ILIKE :keyword
-            ORDER BY embedding <-> (:query_embedding)::vector
+            AND name ILIKE :keyword
+            ORDER BY embedding <-> CAST(:query_embedding AS vector)
             LIMIT 1
         """
 
@@ -68,8 +68,8 @@ class DriveAgent(BaseAgent):
                 "status": "found",
                 "step": "search_drive_files",
                 "file_id": str(row.id),
-                "name": row.payload.get("name"),
-                "content_preview": row.payload.get("content_preview"),
+                "name": row.name,
+                "content_preview": row.content_preview,
                 "method": "hybrid",
             }
 

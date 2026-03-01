@@ -5,16 +5,18 @@ import random
 import redis
 import json
 from sqlalchemy.ext.asyncio import AsyncSession
+from sentence_transformers import SentenceTransformer
 from sqlalchemy import text
 # from openai import AsyncOpenAI
 from sqlalchemy import text
 
 from app.core.config import settings
-
+_embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
 
 class EmbeddingService:
     def __init__(self) -> None:
         self.redis = redis.from_url(settings.REDIS_URL)
+        self.model = _embedding_model
 
     async def embed(self, text: str) -> list[float]:
         # Deterministic fake embedding based on hash
@@ -22,8 +24,7 @@ class EmbeddingService:
         cached = self.redis.get(cache_key)
         if cached:
             return json.loads(cached)
-        random.seed(hash(text))
-        embedding = [random.random() for _ in range(1536)]
+        embedding = self.model.encode(text).tolist()
         self.redis.setex(cache_key, 3600, json.dumps(embedding))
         return embedding
 

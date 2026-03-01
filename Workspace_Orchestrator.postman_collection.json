@@ -1,0 +1,133 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-7890-1234-56789abcdef0",
+		"name": "Agentic Google Workspace Orchestrator",
+		"description": "API collection for the Agentic Workspace Orchestrator. Covers query submission, async task polling, and required mock endpoints for Auth and Sync.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Submit Orchestration Query",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"query\": \"Cancel my Turkish Airlines flight\",\n  \"conversation_id\": \"550e8400-e29b-41d4-a716-446655440000\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/v1/query",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"query"
+					]
+				},
+				"description": "Submits a natural language query to the orchestrator. Returns a task_id for polling."
+			},
+			"response": []
+		},
+		{
+			"name": "2. Poll Task Status",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/v1/query/REPLACE_WITH_TASK_ID",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"query",
+						"REPLACE_WITH_TASK_ID"
+					]
+				},
+				"description": "Retrieve the execution status and final synthesized response of a specific orchestration task."
+			},
+			"response": []
+		},
+		{
+			"name": "3. Google OAuth Trigger (Mock)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/v1/auth/google",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"google"
+					]
+				},
+				"description": "Endpoint to trigger the Google Workspace OAuth flow."
+			},
+			"response": []
+		},
+		{
+			"name": "4. Trigger Manual Sync (Mock)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/v1/sync/trigger",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"sync",
+						"trigger"
+					]
+				},
+				"description": "Manually triggers a background sync for Gmail, GCal, and Drive."
+			},
+			"response": []
+		},
+		{
+			"name": "5. Get Sync Status (Mock)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/v1/sync/status",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"sync",
+						"status"
+					]
+				},
+				"description": "Retrieves the last sync timestamps per service."
+			},
+			"response": []
+		}
+	]
+}
